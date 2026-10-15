@@ -1,0 +1,26 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "username": "Email"
+        },
+        "description": "Enter your Roborock account email address."
+      },
+      "code": {
+        "data": {
+          "code": "Verification Code"
+        },
+        "description": "Enter the verification code sent to your email."
+      }
+    },
+    "error": {
+      "invalid_email": "Invalid email address",
+      "invalid_code": "Invalid verification code",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "Account is already configured"
+    }
+  }
+}

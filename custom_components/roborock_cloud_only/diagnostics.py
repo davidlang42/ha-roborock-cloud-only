@@ -1,44 +1,39 @@
-"""Support for the Airzone diagnostics."""
+"""Diagnostics support for Roborock Cloud Only."""
+from __future__ import annotations
 
-import logging
 from typing import Any
 
-from homeassistant.components.diagnostics import async_redact_data
-from homeassistant.const import CONF_UNIQUE_ID
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .coordinator import RoborockConfigEntry
-
-_LOGGER = logging.getLogger(__name__)
-
-TO_REDACT_CONFIG = [
-    "token",
-    "sn",
-    "rruid",
-    CONF_UNIQUE_ID,
-    "username",
-    "uid",
-    "h",
-    "k",
-    "s",
-    "u",
-    "avatarurl",
-    "nickname",
-    "tuyaUuid",
-    "extra",
-]
+from .const import DOMAIN
+from .coordinator import RoborockCloudOnlyDataUpdateCoordinator
 
 
 async def async_get_config_entry_diagnostics(
-    hass: HomeAssistant, config_entry: RoborockConfigEntry
+    hass: HomeAssistant, entry: ConfigEntry
 ) -> dict[str, Any]:
     """Return diagnostics for a config entry."""
-    coordinators = config_entry.runtime_data
+    coordinator: RoborockCloudOnlyDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    return {
-        "config_entry": async_redact_data(config_entry.data, TO_REDACT_CONFIG),
-        "coordinators": {
-            f"**REDACTED-{i}**": coordinator.device.diagnostic_data()
-            for i, coordinator in enumerate(coordinators.values())
-        },
+    diag_data = {
+        "api_calls_count": len(coordinator.rate_limiter._api_calls),
+        "recent_api_calls": [t.isoformat() for t in coordinator.rate_limiter._api_calls],
+        "devices": [],
     }
+
+    for duid, device_info in coordinator.data.items():
+        device = device_info.get("device")
+        status = device_info.get("status")
+        diag_data["devices"].append({
+            "duid": duid,
+            "model": getattr(device, "model", "Unknown"),
+            "name": getattr(device, "name", "Unknown"),
+            "status_attributes": {
+                attr: getattr(status, attr)
+                for attr in dir(status)
+                if not attr.startswith("_") and not callable(getattr(status, attr))
+            } if status else None,
+        })
+
+    return diag_data

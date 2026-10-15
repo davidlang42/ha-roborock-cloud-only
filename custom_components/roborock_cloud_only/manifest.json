@@ -1,26 +1,12 @@
 {
-  "domain": "roborock",
-  "name": "Roborock",
-  "codeowners": ["@Lash-L", "@allenporter"],
+  "domain": "roborock_cloud_only",
+  "name": "Roborock Cloud Only",
+  "codeowners": [],
   "config_flow": true,
-  "dhcp": [
-    {
-      "macaddress": "249E7D*"
-    },
-    {
-      "macaddress": "B04A39*"
-    },
-    {
-      "hostname": "roborock-*"
-    }
-  ],
-  "documentation": "https://www.home-assistant.io/integrations/roborock",
-  "integration_type": "hub",
-  "iot_class": "local_polling",
-  "loggers": ["roborock"],
-  "quality_scale": "silver",
-  "requirements": [
-    "python-roborock==7.12.0",
-    "vacuum-map-parser-roborock==0.1.5"
-  ]
+  "dependencies": [],
+  "documentation": "https://github.com/davidlang42/ha-roborock-cloud-only",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/davidlang42/ha-roborock-cloud-only/issues",
+  "requirements": ["python-roborock>=0.35.0"],
+  "version": "1.0.0"
 }
